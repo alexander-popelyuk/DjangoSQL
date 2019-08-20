@@ -16,7 +16,7 @@ class Company(models.Model):
   manager = models.ForeignKey(User, on_delete=models.CASCADE)
 
 class Vehicle(models.Model):
-  session = models.ForeignKey(Session, on_delete=models.CASCADE)
+  company = models.ForeignKey(Company, on_delete=models.CASCADE)
   timestamp = models.DateTimeField(auto_now=True)
 
 class Trip(models.Model):

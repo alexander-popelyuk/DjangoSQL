@@ -1,8 +1,14 @@
-from django.views import View
-from django.http.response import HttpResponse
+from django.views.generic import TemplateView
+from django.http.response import HttpResponse, HttpResponseForbidden
+from django.core.exceptions import ObjectDoesNotExist
 
+class Forbidden(Exception):
+  pass
 
-class RequestView(View):
+class BadRequest(Exception):
+  pass
+
+class RequestView(TemplateView):
   def get(self, request, *args, **kwargs):
     response = "Hello world!"
     params = ''
@@ -11,17 +17,17 @@ class RequestView(View):
         params += ', '
       params += '%s=%s' % (param_name, param_value)
     response += "<br/>Query parameters: " + params
-    
-    self.update_session(request)
-    self.print_requests(request)
+    response += "<br/>" + self.handle_session(request)
     
     return HttpResponse(response)
   
-  def update_session(self, request):
+  def handle_session(self, request):
     action = request.GET.get('action', 'list')
     username = request.GET.get('limit', 100)
     
-    pass
+
+    self.print_requests(request)
+    return HttpResponseForbidden()
     
   def print_requests(self, request):
     offset = request.GET.get('offset', 0)
