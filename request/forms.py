@@ -1,9 +1,12 @@
 from django import forms
 
+class Actions:
+  CREATE = 'create'
+  TEST = 'test'
+
 action_choices = (
-  ('create', 'create'),
-  ('delete', 'delete'),
-  ('update', 'update'),
+  (Actions.CREATE, 'create'),
+  (Actions.TEST, 'test'),
 )
 
 class RequestForm(forms.Form):
@@ -11,3 +14,6 @@ class RequestForm(forms.Form):
   username = forms.CharField()
   offset = forms.IntegerField()
   limit = forms.IntegerField()
+  vehicle_name = forms.CharField()
+  vehicle_path = forms.FloatField()
+  vehicle_time = forms.FloatField()

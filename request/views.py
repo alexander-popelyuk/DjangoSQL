@@ -1,6 +1,6 @@
 from django.views.generic import FormView
 from django.core.exceptions import ObjectDoesNotExist
-from .forms import RequestForm
+from .forms import RequestForm, Actions
 
 class RequestView(FormView):
   template_name = "request.html"
@@ -18,4 +18,7 @@ class RequestView(FormView):
     return super().form_invalid(form)
   
   def handle_request(self, params):
-    pass
+    if params['action'] == Actions.CREATE:
+      pass
+    if params['action'] == Actions.TEST:
+      pass

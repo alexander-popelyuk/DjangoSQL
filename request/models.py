@@ -24,5 +24,3 @@ class Trip(models.Model):
   timestamp = models.DateTimeField(auto_now=True)
   path = models.FloatField()
   time = models.FloatField()
-  
-  
