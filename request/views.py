@@ -1,37 +1,21 @@
-from django.views.generic import TemplateView
-from django.http.response import HttpResponse, HttpResponseForbidden
+from django.views.generic import FormView
 from django.core.exceptions import ObjectDoesNotExist
+from .forms import RequestForm
 
-class Forbidden(Exception):
-  pass
-
-class BadRequest(Exception):
-  pass
-
-class RequestView(TemplateView):
-  def get(self, request, *args, **kwargs):
-    response = "Hello world!"
-    params = ''
-    for param_name, param_value in request.GET.items():
-      if params:
-        params += ', '
-      params += '%s=%s' % (param_name, param_value)
-    response += "<br/>Query parameters: " + params
-    response += "<br/>" + self.handle_session(request)
-    
-    return HttpResponse(response)
+class RequestView(FormView):
+  template_name = "request.html"
+  form_class = RequestForm
+  success_url = "/"
   
-  def handle_session(self, request):
-    action = request.GET.get('action', 'list')
-    username = request.GET.get('limit', 100)
-    
-
-    self.print_requests(request)
-    return HttpResponseForbidden()
-    
-  def print_requests(self, request):
-    offset = request.GET.get('offset', 0)
-    limit = request.GET.get('limit', 100)
+  def get_initial(self):
+    return {
+      'offset': 0,
+      'limit': 100,
+    }
+  
+  def form_valid(self, form):
+    self.handle_request(form.cleaned_data)
+    return super().form_invalid(form)
+  
+  def handle_request(self, params):
     pass
-
-  

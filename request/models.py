@@ -21,4 +21,8 @@ class Vehicle(models.Model):
 
 class Trip(models.Model):
   vehicle = models.ForeignKey(Vehicle, on_delete=models.CASCADE)
+  timestamp = models.DateTimeField(auto_now=True)
+  path = models.FloatField()
+  time = models.FloatField()
+  
   
