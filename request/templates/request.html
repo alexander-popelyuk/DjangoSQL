@@ -19,6 +19,14 @@
         justify-content: center;
         margin: 5px auto;
       }
+      .results-block {
+        display: block;
+        font-family: "Courier New", monospace;
+        white-space: pre-wrap;
+        margin: 5px auto;
+        padding: 2px 5px;
+        border: 1px solid black;
+      }
     </style>
   </head>
   <body>
@@ -26,7 +34,7 @@
     <form method="post">
     <div class="param-block">
       <p class="param-header">Generic params:</p>
-      user: {{form.user}} offset: {{form.offset}} limit: {{form.limit}}
+      user: {{form.username}} offset: {{form.offset}} limit: {{form.limit}}
     </div>
     <div class="param-block">
       <p class="param-header">Vehicle params:</p>
@@ -37,5 +45,6 @@
     </div>
     {% csrf_token %}
     </form>
+    <div class="results-block">{{results}}</div>
   </body>
 </html>

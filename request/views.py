@@ -1,6 +1,7 @@
 from django.views.generic import FormView
 from django.core.exceptions import ObjectDoesNotExist
 from .forms import RequestForm, Actions
+import json
 
 class RequestView(FormView):
   template_name = "request.html"
@@ -22,3 +23,6 @@ class RequestView(FormView):
       pass
     if params['action'] == Actions.TEST:
       pass
+    
+    self.extra_context = dict(results=json.dumps(params, indent=2))
+    
