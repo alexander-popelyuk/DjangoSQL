@@ -3,22 +3,6 @@
   <head>
     <title>Test page</title>
     <style>
-      .param-block {
-        display: block;
-        border: 1px solid black;
-        padding: 2px 5px;
-        margin: 2px;
-      }
-      .param-header {
-        display: block;
-        text-alight: center;
-        padding: 2px 5px;
-      }
-      .action-block {
-        display: flex;
-        justify-content: center;
-        margin: 5px auto;
-      }
       .results-block {
         display: block;
         font-family: "Courier New", monospace;
@@ -30,21 +14,6 @@
     </style>
   </head>
   <body>
-    <h1>Test page</h1>
-    <form method="post">
-    <div class="param-block">
-      <p class="param-header">Generic params:</p>
-      user: {{form.username}} offset: {{form.offset}} limit: {{form.limit}}
-    </div>
-    <div class="param-block">
-      <p class="param-header">Vehicle params:</p>
-      name: {{form.vehicle_name}} path: {{form.vehicle_path}} time: {{form.vehicle_time}}
-    </div>
-    <div class="action-block">
-      {{form.action}} <input type="submit" value="execute">
-    </div>
-    {% csrf_token %}
-    </form>
     <div class="results-block">{{results}}</div>
   </body>
 </html>
