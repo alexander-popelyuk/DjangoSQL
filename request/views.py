@@ -14,6 +14,7 @@ from django.db.models.expressions import (
 from django.db.models.functions import RowNumber
 from random import random
 from django.db import connection
+from sqlalchemy import func
 
 
 class RequestView(TemplateView):
@@ -27,14 +28,25 @@ class RequestView(TemplateView):
   def get_result(self):
     #return self.test_django_annotation()
     #self.insert_data()
-    #return self.alchemy_query()
+    return self.alchemy_query()
     #return self.django_query()
-    return self.django_raw_query()
+    #return self.django_raw_query()
   
   def alchemy_query(self):
-    result = TripInterval.sa.query().all()
-    
-    
+    #result = TripInterval.sa.query().all()
+    id_row = func.row_number().over(
+      order_by=TripInterval.sa.id
+    ).label('id_row')
+    time_row = func.row_number().over(
+      partition_by=TripInterval.sa.time,
+      order_by=TripInterval.sa.id
+    ).label('time_row')
+    subquery = TripInterval.sa.query(
+      TripInterval.sa.id,
+      TripInterval.sa.time,
+      time_row, id_row
+    )
+    result = subquery.all()
     
     return result
     
