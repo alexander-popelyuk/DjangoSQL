@@ -24,6 +24,13 @@ class RequestView(TemplateView):
     return super().get_context_data(**kwargs)
   
   def get_result(self):
+    #return self.test_django_annotation()
+    #self.insert_data()
+    return self.alchemy_query()
+    #return self.django_query()
+    #return self.django_raw_query()
+  
+  def alchemy_query(self):
     result = TripInterval.sa.query().all()
     
     
@@ -31,35 +38,28 @@ class RequestView(TemplateView):
     return result
     
     
-  def get_result2(self):
-    #self.insert_data()
-
-    # id_row = Window(RowNumber(), order_by=F('id').asc())
-    # time_row = Window(RowNumber(), partition_by=F('time'), order_by=F('id').asc())
-    #
-    # TripInterval.objects.annotate(
-    #   time_grp=id_row - time_row
-    # ).values('time_grp'
-    # )
-    #
-    # queryset = TripInterval.objects.annotate(
-    #   time_grp=id_row - time_row
-    # ).values(
-    #   'time', 'time_grp'
-    # ).annotate(
-    #   start_id=Min('id'), end_id=Max('id')
-    # ).order_by(
-    #  'start_id'
-    # ).values(
-    #   'time', 'start_id', 'end_id'
-    # )
-
-    #SELECT "request_tripinterval"."id", "request_tripinterval"."timestamp", "request_tripinterval"."params_id", "request_tripinterval"."trip_id",
-    #  "request_tripinterval"."time", "request_tripinterval"."path" FROM "request_tripinterval"
-    #SELECT "request_tripinterval"."id", ROW_NUMBER() OVER (ORDER BY "request_tripinterval"."id" ASC) AS "num" FROM "request_tripinterval"
+  def django_query(self): # this shit doesn't work!!
+    id_row = Window(RowNumber(), order_by=F('id').asc())
+    time_row = Window(RowNumber(), partition_by=F('time'), order_by=F('id').asc())
+    
+    queryset = TripInterval.objects.annotate(
+      time_grp=id_row - time_row
+    ).values(
+      'time', 'time_grp'
+    ).annotate(
+      start_id=Min('id'), end_id=Max('id')
+    ).order_by(
+     'start_id'
+    ).values(
+      'time', 'start_id', 'end_id'
+    )
+    
     return [item for item in queryset.iterator()]
   
-  def _get_result(self):
+  def django_raw_query(self): # TODO: try write me
+    pass
+  
+  def test_django_annotation(self):
     queryset = TripInterval.objects.annotate(
       
       **self.get_annotation()
@@ -69,7 +69,6 @@ class RequestView(TemplateView):
       spd_cnt=Count('spd'),
       big_spd_cnt=Count('big_spd')
     )
-    
     
     result = dict(queryset)
     
