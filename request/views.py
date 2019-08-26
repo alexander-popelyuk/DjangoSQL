@@ -57,7 +57,7 @@ class RequestView(TemplateView):
     
     return [item for item in queryset.iterator()]
   
-  def django_raw_query(self): # TODO: try write me
+  def django_raw_query(self):
     with connection.cursor() as c:
       print('connection.vendor =', connection.vendor)
       c.execute(
