@@ -37,8 +37,14 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    'request'
+    'request',
+    'django_extensions',
+    'aldjemy',
 ]
+
+ALDJEMY_ENGINES = {
+    'sqlite3': 'sqlite+pysqlite'
+}
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',

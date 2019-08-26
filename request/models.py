@@ -1,4 +1,5 @@
 from django.db import models
+from aldjemy.meta import AldjemyMeta
 
 class Person(models.Model):
   objects = models.Manager()
@@ -54,7 +55,7 @@ class TripParams(models.Model):
       self.driver.name, self.min_allowed_speed, self.max_allowed_speed, self.allowed_passengers_count
     )
 
-class TripInterval(models.Model):
+class TripInterval(models.Model, metaclass=AldjemyMeta):
   objects = models.Manager()
   timestamp = models.DateTimeField(auto_now=True)
   params = models.ForeignKey(TripParams, on_delete=models.CASCADE)
