@@ -13,6 +13,7 @@ from django.db.models.expressions import (
 )
 from django.db.models.functions import RowNumber
 from random import random
+from django.db import connection
 
 
 class RequestView(TemplateView):
@@ -26,9 +27,9 @@ class RequestView(TemplateView):
   def get_result(self):
     #return self.test_django_annotation()
     #self.insert_data()
-    return self.alchemy_query()
+    #return self.alchemy_query()
     #return self.django_query()
-    #return self.django_raw_query()
+    return self.django_raw_query()
   
   def alchemy_query(self):
     result = TripInterval.sa.query().all()
@@ -57,7 +58,30 @@ class RequestView(TemplateView):
     return [item for item in queryset.iterator()]
   
   def django_raw_query(self): # TODO: try write me
-    pass
+    with connection.cursor() as c:
+      print('connection.vendor =', connection.vendor)
+      c.execute(
+        """
+        SELECT "subquery"."time" AS "time",
+            MIN("subquery"."id") AS "start_id",
+            MAX("subquery"."id") AS "end_id"
+        FROM (
+          SELECT
+            "request_tripinterval"."id",
+            "request_tripinterval"."time",
+            (
+              ROW_NUMBER() OVER (ORDER BY "request_tripinterval"."id" ASC)
+              -
+              ROW_NUMBER() OVER (PARTITION BY "request_tripinterval"."time" ORDER BY "request_tripinterval"."id" ASC)
+            ) AS "time_grp"
+          FROM
+            "request_tripinterval"
+        ) as subquery
+        GROUP BY "time", "time_grp"
+        ORDER BY "start_id" ASC
+        """
+      )
+      return c.fetchall()
   
   def test_django_annotation(self):
     queryset = TripInterval.objects.annotate(
