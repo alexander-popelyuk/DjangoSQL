@@ -28,8 +28,9 @@ class RequestView(TemplateView):
   def get_result(self):
     #return self.test_django_annotation()
     #self.insert_data()
-    return self.alchemy_query()
+    #return self.alchemy_query()
     #return self.django_query()
+    return self.django_query_2()
     #return self.django_raw_query()
   
   def alchemy_query(self):
@@ -49,8 +50,7 @@ class RequestView(TemplateView):
     result = subquery.all()
     
     return result
-    
-    
+  
   def django_query(self): # this shit doesn't work!!
     id_row = Window(RowNumber(), order_by=F('id').asc())
     time_row = Window(RowNumber(), partition_by=F('time'), order_by=F('id').asc())
@@ -68,6 +68,28 @@ class RequestView(TemplateView):
     )
     
     return [item for item in queryset.iterator()]
+  
+  def django_query_2(self):
+    id_row = Window(RowNumber(), order_by=F('id').asc())
+    time_row = Window(RowNumber(), partition_by=F('time'), order_by=F('id').asc())
+
+    subquery = TripInterval.objects.annotate(
+      time_grp=id_row - time_row
+    )
+    
+    queryset = TripInterval.objects.annotate(
+      time_grp=id_row - time_row,
+    ).values(
+      'time', 'time_grp'
+    ).distinct().annotate(
+      start_id=Min('id'), end_id=Max('id')
+    ).order_by(
+      'start_id'
+    ).values(
+      'time', 'start_id', 'end_id'
+    )
+    
+    return queryset
   
   def django_raw_query(self):
     with connection.cursor() as c:
